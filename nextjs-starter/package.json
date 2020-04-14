@@ -1,5 +1,5 @@
 {
-  "name": "cheap-eats",
+  "name": "starter-files",
   "quokka": {
     "babel": true
   },
@@ -30,7 +30,7 @@
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.3",
     "jss": "^10.0.0",
-    "next": "^9.1.6",
+    "next": "^9.3.2",
     "prop-types": "^15.7.2",
     "query-string": "^6.9.0",
     "react": "^16.12.0",
