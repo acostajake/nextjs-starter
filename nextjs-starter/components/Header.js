@@ -1,23 +1,17 @@
-import AppBar from '@material-ui/core/AppBar';
+import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
+import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Link from 'next/link';
 import Router from 'next/router';
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React from 'react';
 
-export default function Header({ ...props }) {
+export default function Header() {
   return (
-    <Box m={3}>
+    <Box mt={3} mx={2}>
         <Grid container justify="space-between">
-          <Grid>
-            <Typography>CheapEats!</Typography>
-          </Grid>
-          <Grid style={{ display: 'flex' }}>
+          <Avatar src='https://media.giphy.com/media/a5viI92PAF89q/giphy.gif' alt='curious batman' />
+          <Box pb={2} display='flex' direction='row'>
             <Grid item>
               <Button onClick={() => Router.push('/main')}>One</Button>
             </Grid>
@@ -27,8 +21,9 @@ export default function Header({ ...props }) {
             <Grid item>
               <Button onClick={() => Router.push('/fetch')}>Three</Button>
             </Grid>
-          </Grid>
+          </Box>
         </Grid>
+        <Divider light />
     </Box>
   );
 }

@@ -13,7 +13,6 @@ export default function Start() {
 
   const handleSubmit = e => {
     e.preventDefault();
-    // do something
     Router.push('/fetch');
   };
 
