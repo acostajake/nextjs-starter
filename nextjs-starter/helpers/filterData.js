@@ -1,16 +1,16 @@
 export function filterApi(data) {
-    return data.map(each => {
-        const show = each.show;
+    return data.reduce((allShows, each) => {
+        const { show: { id, name, image, premiered, rating, summary }} = each;
         const regex = /(<p[^>]+?>|<p>|<\/p>|<b[^>]+?>|<b>|<\/b>)/gi
-        return ({
-            id: show.id || '',
-            name: show.name || '',
-            img: show.image.medium || '',
-            firstAired: show.premiered || '',
-            rating: show.rating.average || 'None found',
-            sum: show.summary.replace(regex, '') || ''
-        });
-    });
+        return [...allShows, {
+            id: id || '',
+            name: name || '',
+            img: image.medium || '',
+            firstAired: premiered || '',
+            rating: rating.average || 'Not found',
+            sum: summary.replace(regex, '') || ''
+        }];
+    }, []);
 };
 
 export function sortByRating(data) {

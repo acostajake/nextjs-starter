@@ -2,33 +2,15 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import {
-  CarouselProvider,
-  Slider,
-  Slide,
-  ButtonBack,
-  ButtonNext
-} from 'pure-react-carousel';
+import { CarouselProvider, Slider, Slide } from 'pure-react-carousel';
 import React, { useState, useEffect } from 'react';
 
-import {
-  filterApi,
-  sortByRating,
-  sortByRelease
-} from '../../helpers/filterData';
+import { filterApi, sortByRating, sortByRelease } from '../../helpers/filterData';
+import CarouselNavButtons from './CarouselNavButtons';
 
 import 'pure-react-carousel/dist/react-carousel.es.css';
 
 const useStyles = makeStyles({
-  styledButton: {
-    borderRadius: 3,
-    boxShadow: '0 3px 5px 2px rgba(113, 106, 106, .3)',
-    backgroundColor: 'black',
-    color: 'lightgrey',
-    height: 24,
-    margin: '0 10px',
-    padding: '0 30px'
-  },
   slideWrapper: {
     padding: '8px',
     border: '1px solid black',
@@ -37,15 +19,18 @@ const useStyles = makeStyles({
   gridContainer: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     margin: '8px 0'
+  },
+  carouselStyles: {
+    margin: '8px 24px'
   }
 });
 
 const FetchPage = props => {
   const [data, setData] = useState({});
-  const [filteredData, setFilteredData] = useState([]);
-  const [selectedData, setSelectedData] = useState({});
+
+  const { updateLeftPanel, updateSelection } = props;
 
   useEffect(() => {
     async function getData() {
@@ -62,15 +47,17 @@ const FetchPage = props => {
   const getRatings = e => {
     e.preventDefault();
     const newData = sortByRating(data);
-    props.updateLeftPanel('test')
-    console.log(props)
-    setFilteredData(newData);
+    updateLeftPanel('Highest Rated', newData);
   };
 
   const getReleaseDates = e => {
     e.preventDefault();
     const newData = sortByRelease(data);
-    console.log(newData);
+    updateLeftPanel('Release Dates', newData);
+  };
+
+  const selectSlide = each => {
+    updateSelection(each)
   };
 
   const classes = useStyles();
@@ -78,12 +65,8 @@ const FetchPage = props => {
   return (
     <>
       <Grid container className={classes.gridContainer}>
-        <Typography>
-          <Button onClick={e => getRatings(e)}>Sort by ratings</Button>
-        </Typography>
-        <Typography>
-          <Button onClick={e => getReleaseDates(e)}>See release dates</Button>
-        </Typography>
+        <Button onClick={e => getRatings(e)}>Sort by ratings</Button>
+        <Button onClick={e => getReleaseDates(e)}>See release dates</Button>
       </Grid>
       <Typography>Swipable view...</Typography>
       <CarouselProvider
@@ -100,19 +83,17 @@ const FetchPage = props => {
                 index={each.id}
                 href="/p/[id]"
                 as={`/p/${each.id}`}
+                onClick={() => selectSlide(each)}
               >
                 <a>{each.name}</a>
-                <p>Summary: <i>{each.sum}</i></p>
+                <p className={classes.carouselStyles}>Summary: <i>{each.sum}</i></p>
               </Slide>
             ))}
         </Slider>
-        <Grid container className={classes.gridContainer}>
-          <ButtonBack className={classes.styledButton}>Back</ButtonBack>
-          <ButtonNext className={classes.styledButton}>Next</ButtonNext>
-        </Grid>
+        <CarouselNavButtons />
       </CarouselProvider>
     </>
   );
-}
+};
 
 export default FetchPage;
