@@ -1,11 +1,15 @@
 import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
 import Grid from '@material-ui/core/Grid';
+import FormLabel from '@material-ui/core/FormLabel';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import { CarouselProvider, Slider, Slide } from 'pure-react-carousel';
 import React, { useState, useEffect } from 'react';
 
-import { filterApi, sortByRating, sortByRelease } from '../../helpers/filterData';
+import { filterApi, getAvatar, getNewShowData, sortByRating, sortByRelease } from '../../helpers/filterData';
+import { showsToSearch } from '../../lib/shows';
 import CarouselNavButtons from './CarouselNavButtons';
 
 import 'pure-react-carousel/dist/react-carousel.es.css';
@@ -29,6 +33,7 @@ const useStyles = makeStyles({
 
 const FetchPage = props => {
   const [data, setData] = useState({});
+  const [showName, setShowName] = useState('Batman');
 
   const { updateLeftPanel, updateSelection } = props;
 
@@ -56,9 +61,20 @@ const FetchPage = props => {
     updateLeftPanel('Release Dates', newData);
   };
 
-  const selectSlide = each => {
-    updateSelection(each)
+  const selectSlide = show => {
+    const avatar = getAvatar(showName);
+    updateSelection(show, avatar);
   };
+
+  const selectMenuItem = async e => {
+    e.preventDefault();
+    const show = e.target.value;
+    const avatar = getAvatar(show);
+    const results = await getNewShowData(show);
+    setShowName(show);
+    setData({ data: results });
+    updateSelection(results[0], avatar);
+  }
 
   const classes = useStyles();
 
@@ -68,7 +84,19 @@ const FetchPage = props => {
         <Button onClick={e => getRatings(e)}>Sort by ratings</Button>
         <Button onClick={e => getReleaseDates(e)}>See release dates</Button>
       </Grid>
-      <Typography>Swipable view...</Typography>
+      <FormControl fullWidth variant='outlined'>
+        <FormLabel id="show-select-label">Try another show</FormLabel>
+        <Select 
+          labelId="show-name-label"
+          id="show-name"
+          margin='dense'
+          value={showName}
+          onChange={e => selectMenuItem(e)}>
+          {showsToSearch.map(each => (
+            <MenuItem dense key={each.avatar} value={each.name}>{each.name}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       <CarouselProvider
         naturalSlideWidth={100}
         naturalSlideHeight={125}

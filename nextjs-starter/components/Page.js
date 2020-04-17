@@ -16,21 +16,23 @@ function Page({ Component }) {
     name: '',
     img: ''
   });
+  const [avatarUrl, setAvatarUrl] = useState('');
 
   const updateLeftPanel = (filterName, newData) => {
     setSelection({});
     setData({ filterName, list: newData });
   };
 
-  const updateSelection = selection => {
+  const updateSelection = (selection, avatar) => {
     const { id, name, img } = selection;
+    setAvatarUrl(avatar);
     setData({ filterName: '', list: [] });
     setSelection({ id, name, img });
   };
 
   return (
     <Grid container direction='column'>
-      <Header />
+      <Header avatarUrl={avatarUrl} />
       <Grid container direction='row' justify='space-around' wrap='nowrap'>
         <Box mt={3} width='auto%' maxWidth='250px' display='flex' flexDirection='column' justifyContent='flex-start' >
           <Typography align='center'>{data.filterName}</Typography>
@@ -38,7 +40,10 @@ function Page({ Component }) {
             <Grid container display='flex' direction='column'>
               <Typography align='center'>{selection.name}</Typography>
               <Box my={3}>
-                <img src={selection.img} alt='https://media.giphy.com/media/a5viI92PAF89q/giphy.gif' />
+                {selection.img ? 
+                <img src={selection.img} alt='Image for Show' />
+                : <img src='https://media.giphy.com/media/IHOOMIiw5v9VS/giphy.gif' alt='Image not found' />
+              }
               </Box>
             </Grid>
           )

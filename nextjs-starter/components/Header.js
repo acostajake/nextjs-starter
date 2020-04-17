@@ -6,11 +6,12 @@ import Grid from '@material-ui/core/Grid';
 import Router from 'next/router';
 import React from 'react';
 
-export default function Header() {
+export default function Header(props) {
+  const { avatarUrl } = props;
   return (
-    <Box mt={3} mx={2}>
+    <Box mt={1} mx={2}>
         <Grid container justify="space-between">
-          <Avatar src='https://media.giphy.com/media/a5viI92PAF89q/giphy.gif' alt='curious batman' />
+          <Avatar sizes='large' src={avatarUrl} alt='gif for show' />
           <Box pb={2} display='flex' direction='row'>
             <Grid item>
               <Button onClick={() => Router.push('/main')}>One</Button>

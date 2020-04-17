@@ -1,11 +1,13 @@
+import { showsToSearch } from '../lib/shows';
+
 export function filterApi(data) {
     return data.reduce((allShows, each) => {
         const { show: { id, name, image, premiered, rating, summary }} = each;
-        const regex = /(<p[^>]+?>|<p>|<\/p>|<b[^>]+?>|<b>|<\/b>)/gi
+        const regex = /(<p[^>]+?>|<p>|<\/p>|<b[^>]+?>|<b>|<\/b>|<i[^>]+?>|<i>|<\/i>)/gi
         return [...allShows, {
             id: id || '',
             name: name || '',
-            img: image.medium || '',
+            img: image && image.medium || '',
             firstAired: premiered || '',
             rating: rating.average || 'Not found',
             sum: summary.replace(regex, '') || ''
@@ -13,9 +15,21 @@ export function filterApi(data) {
     }, []);
 };
 
+export const getAvatar = showName => {
+    const showTitle = showsToSearch.find(each => each.name === showName);
+    return showTitle.avatar;
+};
+
+export const getNewShowData = async showName => {
+    const formattedShowName = showName.toLowerCase().replace(' ', '-')
+    const response = await fetch(`https://api.tvmaze.com/search/shows?q=${formattedShowName}`);
+    const myJson = await response.json();
+    return filterApi(myJson);
+};
+
 export function sortByRating(data) {
     const arr = data.data;
-    return arr.sort((a, b) => a.rating - b.rating)
+    return arr.sort((a, b) => b.rating - a.rating)
 };
 
 export function sortByRelease(data) {
