@@ -1,6 +1,14 @@
 import { showsToSearch } from '../lib/shows';
 
 export function filterApi(data) {
+    if(!data.length) return [{
+        id: '0000',
+        name: 'No results found',
+        img: 'https://media.giphy.com/media/SUzPI5wAkp6UXMEkok/giphy.gif',
+        firstAired: 'n/a',
+        rating: 'n/a',
+        sum: 'No results found :('
+    }]
     return data.reduce((allShows, each) => {
         const { show: { id, name, image, premiered, rating, summary }} = each;
         const regex = /(<p[^>]+?>|<p>|<\/p>|<b[^>]+?>|<b>|<\/b>|<i[^>]+?>|<i>|<\/i>)/gi
@@ -10,7 +18,7 @@ export function filterApi(data) {
             img: image && image.medium || '',
             firstAired: premiered || '',
             rating: rating.average || 'Not found',
-            sum: summary.replace(regex, '') || ''
+            sum: summary && summary.replace(regex, '') || ''
         }];
     }, []);
 };
