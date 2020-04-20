@@ -1,24 +1,21 @@
+import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
 import Grid from '@material-ui/core/Grid';
-import FormLabel from '@material-ui/core/FormLabel';
 import { makeStyles } from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
 import { CarouselProvider, Slider, Slide } from 'pure-react-carousel';
 import React, { useState, useEffect } from 'react';
 
-import { filterApi, getAvatar, getNewShowData, sortByRating, sortByRelease } from '../../helpers/filterData';
-import { showsToSearch } from '../../lib/shows';
+import { filterApi, getAvatar, sortByRating, sortByRelease } from '../../helpers/filterData';
 import CarouselNavButtons from './CarouselNavButtons';
+import SelectInput from './SelectInput';
+import TypedInput from './TypedInput';
 
 import 'pure-react-carousel/dist/react-carousel.es.css';
 
 const useStyles = makeStyles({
   slideWrapper: {
     padding: '8px',
-    border: '1px solid black',
-    width: '100%'
+    border: '1px solid black'
   },
   gridContainer: {
     display: 'flex',
@@ -28,12 +25,16 @@ const useStyles = makeStyles({
   },
   carouselStyles: {
     margin: '8px 24px'
+  },
+  halfWidth: {
+    width: '40%'
   }
 });
 
 const FetchPage = props => {
   const [data, setData] = useState({});
   const [showName, setShowName] = useState('Batman');
+  const [useSelect, toggleSelect] = useState(true);
 
   const { updateLeftPanel, updateSelection } = props;
 
@@ -66,37 +67,25 @@ const FetchPage = props => {
     updateSelection(show, avatar);
   };
 
-  const selectMenuItem = async e => {
-    e.preventDefault();
-    const show = e.target.value;
-    const avatar = getAvatar(show);
-    const results = await getNewShowData(show);
-    setShowName(show);
-    setData({ data: results });
-    updateSelection(results[0], avatar);
-  }
+  const updateShowName = name => {
+    setShowName(name);
+  };
 
   const classes = useStyles();
 
   return (
     <>
+        <Box mb={1} display='flex' flexDirection='row' justifyContent='flex-start'>
+          <Button onClick={() => toggleSelect(!useSelect)}>{useSelect ? 'Try Typing' : 'Try Select'}</Button>
+          {useSelect ?
+          <SelectInput classes={classes} setData={setData} updateSelection={updateSelection} updateShowName={updateShowName} />
+          : <TypedInput classes={classes} setData={setData} updateSelection={updateSelection} updateShowName={updateShowName} />
+          }
+        </Box>
       <Grid container className={classes.gridContainer}>
         <Button onClick={e => getRatings(e)}>Sort by ratings</Button>
         <Button onClick={e => getReleaseDates(e)}>See release dates</Button>
       </Grid>
-      <FormControl fullWidth variant='outlined'>
-        <FormLabel id="show-select-label">Try another show</FormLabel>
-        <Select 
-          labelId="show-name-label"
-          id="show-name"
-          margin='dense'
-          value={showName}
-          onChange={e => selectMenuItem(e)}>
-          {showsToSearch.map(each => (
-            <MenuItem dense key={each.avatar} value={each.name}>{each.name}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
       <CarouselProvider
         naturalSlideWidth={100}
         naturalSlideHeight={125}
@@ -109,7 +98,7 @@ const FetchPage = props => {
               <Slide
                 key={each.id}
                 index={each.id}
-                href="/p/[id]"
+                href='/p/[id]'
                 as={`/p/${each.id}`}
                 onClick={() => selectSlide(each)}
               >
